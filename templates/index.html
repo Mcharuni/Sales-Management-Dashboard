@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SalesPulse | Sales Management Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><span class="brand-mark">S</span> Sales<span class="brand-muted">Pulse</span></div>
+  <p class="nav-caption">WORKSPACE</p>
+  <a class="nav active" href="#overview">▦ &nbsp; Overview</a><a class="nav" href="#analytics">◒ &nbsp; Analytics</a><a class="nav" href="#records">▤ &nbsp; Sales records</a>
+  <div class="side-bottom"><div class="tip"><b>✦ Sales insights</b><p>Track performance and find your next growth opportunity.</p><a href="#analytics">Explore analytics ↗</a></div><div class="user"><span>SA</span><div><b>Sales Admin</b><small>Administrator</small></div></div></div>
+</aside>
+<main class="main">
+<header class="topbar"><div class="title-group"><button id="menuBtn" class="menu-btn">☰</button><div><small>SALES WORKSPACE</small><h1>Sales overview</h1></div></div><div class="top-actions"><span class="live"><i></i> Live dashboard</span><button class="btn primary" id="addTop">＋ Add sale</button></div></header>
+<section class="panel filter-panel"><div class="section-head"><div><b>Performance snapshot</b><p>Monitor your business at a glance</p></div><button class="btn pale" id="reset">Reset filters ↺</button></div><div class="filters">
+<label>From date<input type="date" id="start"></label><label>To date<input type="date" id="end"></label><label>Category<select id="categoryFilter"><option value="">All categories</option></select></label><label>Region<select id="regionFilter"><option value="">All regions</option></select></label><button class="btn dark" id="apply">Apply filters</button></div></section>
+<section class="kpis" id="overview">
+<article class="kpi"><div class="kpi-head">Total revenue <span class="kicon purple">₹</span></div><strong id="revenue">₹0</strong><small class="green-text">↗ Sales generated</small></article>
+<article class="kpi"><div class="kpi-head">Net profit <span class="kicon green">↗</span></div><strong id="profit">₹0</strong><small class="green-text" id="margin">0% margin</small></article>
+<article class="kpi"><div class="kpi-head">Total orders <span class="kicon orange">▤</span></div><strong id="orders">0</strong><small class="muted">Completed records</small></article>
+<article class="kpi"><div class="kpi-head">Average order value <span class="kicon blue">◈</span></div><strong id="aov">₹0</strong><small class="muted" id="units">0 units sold</small></article>
+</section>
+<section class="charts" id="analytics">
+<article class="panel chart-panel wide"><div class="section-head"><div><b>Revenue & profit trend</b><p>Monthly sales performance</p></div><span class="legend"><i class="l-purple"></i> Revenue <i class="l-green"></i> Profit</span></div><div class="chart-box"><canvas id="trendChart"></canvas></div></article>
+<article class="panel chart-panel"><div class="section-head"><div><b>Sales by category</b><p>Revenue distribution</p></div></div><div class="donut-box"><canvas id="categoryChart"></canvas></div><div id="categoryLegend" class="category-legend"></div></article>
+<article class="panel chart-panel"><div class="section-head"><div><b>Regional performance</b><p>Revenue by region</p></div></div><div class="chart-box"><canvas id="regionChart"></canvas></div></article>
+<article class="panel chart-panel"><div class="section-head"><div><b>Top products</b><p>Ranked by revenue</p></div></div><div id="topProducts" class="top-products"></div></article>
+</section>
+<section class="panel records" id="records"><div class="records-head"><div><b>Sales records</b><p>Manage and review individual transactions</p></div><div class="record-tools"><input id="search" type="search" placeholder="⌕  Search customer or product"><a class="btn outline" href="/api/export">↓ Export CSV</a><button class="btn primary" id="addRecord">＋ Add sale</button></div></div>
+<div class="table-scroll"><table><thead><tr><th>ORDER</th><th>DATE</th><th>CUSTOMER</th><th>PRODUCT</th><th>CATEGORY</th><th>REGION</th><th>QTY</th><th>REVENUE</th><th>PROFIT</th><th>ACTIONS</th></tr></thead><tbody id="salesTable"><tr><td colspan="10" class="empty">Loading records…</td></tr></tbody></table></div><div class="table-footer"><span id="recordCount">0 records</span><span>Sample data · Currency: INR (₹)</span></div></section>
+<footer>SalesPulse Dashboard <span>•</span> Built for sales visibility and smarter decisions</footer>
+</main>
+<div class="backdrop" id="modalBackdrop"><section class="modal"><div class="modal-head"><div><small>TRANSACTION DETAILS</small><h2 id="modalTitle">Add new sale</h2></div><button id="closeModal" class="close">×</button></div>
+<form id="saleForm"><input type="hidden" id="saleId"><div class="form-grid">
+<label>Order date *<input id="orderDate" type="date" required></label><label>Customer name *<input id="customer" maxlength="100" required placeholder="Customer name"></label>
+<label>Product *<input id="product" maxlength="100" required placeholder="Product name"></label><label>Category *<select id="category" required><option value="">Choose category</option><option>Electronics</option><option>Accessories</option><option>Furniture</option><option>Home & Office</option><option>Other</option></select></label>
+<label>Region *<select id="region" required><option value="">Choose region</option><option>North</option><option>South</option><option>East</option><option>West</option><option>Central</option></select></label><label>Payment method *<select id="payment" required><option value="">Choose method</option><option>UPI</option><option>Card</option><option>Cash</option><option>Bank Transfer</option></select></label>
+<label>Quantity *<input id="quantity" type="number" min="1" step="1" value="1" required></label><label>Unit price (₹) *<input id="price" type="number" min="0" step="0.01" required></label><label>Unit cost (₹) *<input id="cost" type="number" min="0" step="0.01" required></label>
+</div><div id="formError" class="error"></div><div class="modal-actions"><button type="button" class="btn outline" id="cancelModal">Cancel</button><button class="btn primary" id="saveBtn">Save sale</button></div></form></section></div>
+<div id="toast" class="toast"></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body></html>
